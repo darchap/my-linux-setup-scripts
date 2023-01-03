@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ---------------------------------------------------------------------------------
 # Purpose - Script to get stuff done in a fedora installation
@@ -14,6 +14,7 @@
 #rmmod rmi_smbus
 #modprobe rmi_smbus
 #fi' | sudo tee /usr/lib/systemd/system-sleep/touchpad-fix.sh
+sudo grubby --update-kernel=ALL --args="psmouse.synaptics_intertouch=0"
 
 #THINKFAN
 sudo dnf install -y thinkfan
@@ -61,7 +62,7 @@ levels:
 #  - [5, 50, 57]
 #  - [6, 55, 72]
 #  - [7, 70, 82]
-#  - ["level full-speed", 77, 32767]" | sudo tee /etc/thinkfan.conf
+#  - [level full-speed, 77, 32767]" | sudo tee /etc/thinkfan.conf
 
 sudo mkdir -p /etc/systemd/system/thinkfan.service.d
 echo "[Unit]
@@ -84,24 +85,23 @@ sudo mkdir -p /boot/grub2/themes
 sudo cp -r distro-grub-themes/customize/lenovo/ /boot/grub2/themes
 rm -rf distro-grub-themes
 
-if [ $(grep GRUB_TERMINAL_OUTPUT= /etc/default/grub) ]; then
-  #sudo sed -i '/GRUB_TERMINAL_OUTPUT=\*/c\#GRUB_TERMINAL_OUTPUT=\*' /etc/default/grub
+if grep -q GRUB_TERMINAL_OUTPUT= /etc/default/grub; then
   sudo sed -e '/GRUB_TERMINAL_OUTPUT=^*/ s/^#*/#/g' -i /etc/default/grub
 fi
 
-if [ -z $(grep GRUB_TIMEOUT= /etc/default/grub) ]; then
+if ! grep -q GRUB_TIMEOUT= /etc/default/grub; then
   echo 'GRUB_TIMEOUT=10' | sudo tee -a /etc/default/grub
 else
   sudo sed -i '/GRUB_TIMEOUT=/c\GRUB_TIMEOUT=10' /etc/default/grub
 fi
 
-if [ -z $(grep GRUB_GFXMODE= /etc/default/grub) ]; then
+if ! grep -q GRUB_GFXMODE= /etc/default/grub; then
   echo 'GRUB_GFXMODE="1920x1080"' | sudo tee -a /etc/default/grub
 else
   sudo sed -i '/GRUB_GFXMODE=/c\GRUB_GFXMODE="1920x1080"' /etc/default/grub
 fi
 
-if [ -z $(grep GRUB_THEME= /etc/default/grub) ]; then
+if ! grep -q GRUB_THEME= /etc/default/grub; then
   echo 'GRUB_THEME="/boot/grub2/themes/lenovo/theme.txt"' | sudo tee -a /etc/default/grub
 else
   sudo sed -i '/GRUB_THEME=/c\GRUB_THEME="/boot/grub2/themes/lenovo/theme.txt"' /etc/default/grub
