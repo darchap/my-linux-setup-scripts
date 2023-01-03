@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ---------------------------------------------------------------------------------
 # Purpose - Script to get stuff done in a fedora installation
@@ -6,31 +6,31 @@
 # ---------------------------------------------------------------------------------
 
 #DNF CONFIG
-if [ -z $(grep fastestmirror= /etc/dnf/dnf.conf) ]; then
+if ! grep -q fastestmirror= /etc/dnf/dnf.conf; then
     echo "fastestmirror=True" | sudo tee -a /etc/dnf/dnf.conf
 else
     sudo sed -i '/fastestmirror=/c\fastestmirror=True' /etc/dnf/dnf.conf
 fi
 
-if [ -z $(grep max_parallel_downloads= /etc/dnf/dnf.conf) ]; then
+if ! grep -q max_parallel_downloads= /etc/dnf/dnf.conf; then
     echo "max_parallel_downloads=10" | sudo tee -a /etc/dnf/dnf.conf
 else
     sudo sed -i '/max_parallel_downloads=/c\max_parallel_downloads=10' /etc/dnf/dnf.conf
 fi
 
-if [ -z $(grep defaultyes= /etc/dnf/dnf.conf) ]; then
+if ! grep -q defaultyes= /etc/dnf/dnf.conf; then
     echo "defaultyes=True" | sudo tee -a /etc/dnf/dnf.conf
 else
     sudo sed -i '/defaultyes=/c\defaultyes=True' /etc/dnf/dnf.conf
 fi
 
-if [ -z $(grep keepcache= /etc/dnf/dnf.conf) ]; then
+if ! grep -q keepcache= /etc/dnf/dnf.conf; then
     echo "keepcache=True" | sudo tee -a /etc/dnf/dnf.conf
 else
     sudo sed -i '/keepcache=/c\keepcache=True' /etc/dnf/dnf.conf
 fi
 
-if [ -z $(grep deltarpm= /etc/dnf/dnf.conf) ]; then
+if ! grep -q deltarpm= /etc/dnf/dnf.conf; then
     echo "deltarpm=True" | sudo tee -a /etc/dnf/dnf.conf
 else
     sudo sed -i '/deltarpm=/c\deltarpm=True' /etc/dnf/dnf.conf
@@ -53,7 +53,7 @@ sudo sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-cisco-openh264.rep
 sudo sed -i 's/countme=1/countme=0/g' /etc/yum.repos.d/*
 
 #RPM FUSION REPOS
-sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-"$(rpm -E %fedora)".noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
 #ADD FLATHUB REPO
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
