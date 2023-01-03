@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ---------------------------------------------------------------------------------
 # Purpose - Script to get stuff done in a fedora installation
@@ -25,8 +25,26 @@ sudo dnf install -y stacer
 #sudo systemctl start libvirtd
 #sudo systemctl enable libvirtd
 
+#YADM
+git clone https://github.com/TheLocehiliosan/yadm.git ~/.yadm-project
+if [ ! -d "$HOME/bin" ]; then
+    mkdir -p "$HOME/bin"
+fi
+ln -s ~/.yadm-project/yadm ~/bin/yadm
+
 #GIT
 sudo dnf install -y git
+
+#ZSH
+sudo dnf install -y zsh
+sudo chsh -s "$(which zsh)" "$USER"
+
+#starship
+curl -sS https://starship.rs/install.sh | sh
+
+#nerd fonts
+git clone https://github.com/ryanoasis/nerd-fonts.git
+sudo ./nerd-fonts/install.sh -S Meslo
 
 #UFW
 sudo dnf install -y ufw
@@ -62,3 +80,17 @@ bantime = 300" | sudo tee /etc/fail2ban/jail.d/wordpress.conf
 
 sudo systemctl enable fail2ban
 sudo systemctl start fail2ban
+
+#SPOTIFY
+sudo dnf install lpf-spotify-client
+sudo usermod -a -G pkg-build "$USER"
+#exec su - $USER
+#lpf update
+
+curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-cli/master/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.sh | sh
+#sudo chmod a+wr /usr/share/spotify-client/
+#sudo chmod a+wr -R /usr/share/spotify-client/Apps/
+git clone https://github.com/spicetify/spicetify-themes.git
+cp -r spicetify-themes/* ~/.config/spicetify/Themes
+rm -rf spicetify-themes
