@@ -5,11 +5,6 @@
 # Author  - @darchap
 # ---------------------------------------------------------------------------------
 
-#VSCODIUM
-sudo rpmkeys --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
-printf "[gitlab.com_paulcarroty_vscodium_repo]\nname=download.vscodium.com\nbaseurl=https://download.vscodium.com/rpms/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg\nmetadata_expire=1h" | sudo tee -a /etc/yum.repos.d/vscodium.repo
-sudo dnf install -y codium
-
 #VSCODE
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
@@ -21,14 +16,19 @@ sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.co
 sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
 sudo dnf install -y brave-browser
 
+#GIT
+sudo dnf install -y git
+
 #STACER
 sudo dnf install -y stacer
 
+#FLATSEAL
+flatpak install -y flatseal
+
 #QEMU AND VIRT-MANAGER
-#sudo dnf install -y qemu-kvm libvirt virt-install bridge-utils virt-manager
-#sudo dnf install -y libvirt-devel virt-top libguestfs-tools guestfs-tools
-#sudo systemctl start libvirtd
-#sudo systemctl enable libvirtd
+sudo dnf group install --with-optional virtualization
+sudo systemctl start libvirtd
+sudo systemctl enable libvirtd
 
 #YADM
 git clone https://github.com/TheLocehiliosan/yadm.git ~/.yadm-project
@@ -36,9 +36,6 @@ if [ ! -d "$HOME/bin" ]; then
     mkdir -p "$HOME/bin"
 fi
 ln -s ~/.yadm-project/yadm ~/bin/yadm
-
-#GIT
-sudo dnf install -y git
 
 #ZSH
 sudo dnf install -y zsh
@@ -87,15 +84,17 @@ sudo systemctl enable fail2ban
 sudo systemctl start fail2ban
 
 #SPOTIFY
-sudo dnf install lpf-spotify-client
-sudo usermod -a -G pkg-build "$USER"
-#exec su - $USER
-#lpf update
+flatpak install -y spotify
 
+#SPICETIFY
 curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-cli/master/install.sh | sh
+source ~/.zshrc
+spicetify config prefs_path "$HOME"/.var/app/com.spotify.Client/config/spotify/prefs
 curl -fsSL https://raw.githubusercontent.com/spicetify/spicetify-marketplace/main/resources/install.sh | sh
-#sudo chmod a+wr /usr/share/spotify-client/
-#sudo chmod a+wr -R /usr/share/spotify-client/Apps/
+
+sudo chmod a+wr /var/lib/flatpak/app/com.spotify.Client/x86_64/stable/active/files/extra/share/spotify
+sudo chmod a+wr -R /var/lib/flatpak/app/com.spotify.Client/x86_64/stable/active/files/extra/share/spotify/Apps
+
 git clone https://github.com/spicetify/spicetify-themes.git
 cp -r spicetify-themes/* ~/.config/spicetify/Themes
 rm -rf spicetify-themes
