@@ -57,6 +57,8 @@ sudo ufw default deny incoming
 sudo ufw limit in 22/tcp comment "rate-limit SSH"
 sudo ufw allow 80/tcp comment 'accept HTTP connections'
 sudo ufw allow 443/tcp comment 'accept HTTPS connections'
+sudo ufw allow 1714:1764/udp comment 'accept kde-connect'
+sudo ufw allow 1714:1764/tcp comment 'accept kde-connect'
 sudo ufw default allow outgoing
 sudo ufw enable
 
